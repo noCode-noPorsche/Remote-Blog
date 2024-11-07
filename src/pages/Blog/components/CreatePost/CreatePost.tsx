@@ -1,27 +1,27 @@
-import { addPost, cancelEditingPost, finishEditingPost } from 'pages/Blog/blog.slice'
+import { addPost, cancelEditingPost, updatePost } from 'pages/Blog/blog.slice'
 import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from 'store'
+import { useSelector } from 'react-redux'
+import { RootState, useAppDispatch } from 'store'
 import { Post } from 'types/blog.types'
 
 const initialPost: Post = {
-  id: '',
   description: '',
   featuredImage: '',
   publishDate: '',
   published: false,
-  title: ''
+  title: '',
+  id: ''
 }
 
 export default function CreatePost() {
   const [formData, setFormData] = useState<Post>(initialPost)
-  const dispatch = useDispatch()
   const editingPost = useSelector((state: RootState) => state.blog.editingPost)
+  const dispatch = useAppDispatch()
 
   const handleSubmitPost = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (editingPost) {
-      dispatch(finishEditingPost(formData))
+      dispatch(updatePost({ postId: editingPost.id, body: formData }))
     } else {
       dispatch(addPost(formData))
     }

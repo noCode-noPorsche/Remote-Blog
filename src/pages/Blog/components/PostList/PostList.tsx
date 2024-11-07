@@ -1,11 +1,39 @@
-import { deletePost, startEditingPost } from 'pages/Blog/blog.slice'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from 'store'
+import { deletePost, getPostList, startEditingPost } from 'pages/Blog/blog.slice'
+import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState, useAppDispatch } from 'store'
 import PostItem from '../PostItem'
 
 export default function PostList() {
   const postList = useSelector((state: RootState) => state.blog.postList)
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    // const controller = new AbortController()
+    // http.get("posts", { signal: controller.signal }).then((res) => {
+    //   console.log(res)
+    //   const postsListResult = res.data
+    //   dispatch({
+    //     type: "blog/getPostListSuccess",
+    //     payload: postsListResult
+    //   })
+    // }).catch(error => {
+    //   if (!(error.code === "ERR_CANCELED")){
+    //     dispatch({
+    //       type: "blog/getPostListFail",
+    //       payload: error
+    //     })
+    //   }
+
+    // })
+    // return () => {
+    //   controller.abort()
+    // }
+    const promise = dispatch(getPostList())
+    return () => {
+      promise.abort()
+    }
+  }, [dispatch])
 
   const handleDeletePost = (postId: string) => {
     dispatch(deletePost(postId))
